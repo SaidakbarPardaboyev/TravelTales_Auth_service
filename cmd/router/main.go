@@ -14,5 +14,5 @@ func main() {
 	}
 
 	r := api.NewRouter(db)
-	r.Run(":" + config.Load().AUTH_SERVICE_PORT)
+	r.Run(config.Load().AUTH_SERVICE_PORT)
 }

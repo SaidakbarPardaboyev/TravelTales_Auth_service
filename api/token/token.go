@@ -83,8 +83,6 @@ func ExtractClaims(tokenStr string) (jwt.MapClaims, error) {
 		}
 		return []byte(config.Load().SINGNING_KEY_REFRESH), nil
 	})
-	fmt.Println(config.Load().SINGNING_KEY_REFRESH)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
