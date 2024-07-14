@@ -1,0 +1,272 @@
+basePath: /auth
+definitions:
+  models.Error:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  models.RequestLogin:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.RequestLogout:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  models.RequestRefreshToken:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  models.RequestRegister:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.RequestResetPassword:
+    properties:
+      email:
+        type: string
+    type: object
+  models.ResponseLogout:
+    properties:
+      message:
+        type: string
+    type: object
+  models.ResponseRefreshToken:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+    type: object
+  models.ResponseRegister:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  models.ResponseResetPassword:
+    properties:
+      message:
+        type: string
+    type: object
+  models.UpdatePassword:
+    properties:
+      password:
+        type: string
+    type: object
+host: localhost:1111
+info:
+  contact:
+    email: '"pardaboyevsaidakbar103@gmail.com"'
+    name: Saidakbar
+    url: http://www.support_me_with_smile
+  description: Sayohatchilar o'rtasida tajriba almashish, sayohat rejalarini tuzish
+    va boshqalar bilan bo'lishish imkoniyatini yaratish orqali global sayohat hamjamiyatini
+    shakllantirish.
+  title: Auth Service
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: this API for login new user to the TravelTales app
+      parameters:
+      - description: email and password required
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns access and refresh tokens
+          schema:
+            $ref: '#/definitions/models.ResponseRefreshToken'
+        "400":
+          description: it occur when user send invalid email or password
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: it occur when error with write user params into database
+          schema:
+            $ref: '#/definitions/models.Error'
+      tags:
+      - Auth
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: this API for logout user  to the TravelTales app
+      parameters:
+      - description: refresh token is required
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestLogout'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: returns massage for success
+          schema:
+            $ref: '#/definitions/models.ResponseLogout'
+        "400":
+          description: it occur when user send invalid refresh token
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: it occur when error with error of deleting refresh token
+          schema:
+            $ref: '#/definitions/models.Error'
+      tags:
+      - Auth
+  /refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: this API for refresh user access token to the TravelTales app
+      parameters:
+      - description: refresh token is required
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestRefreshToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns access and refresh tokens
+          schema:
+            $ref: '#/definitions/models.ResponseRefreshToken'
+        "400":
+          description: it occur when user send invalid refresh token
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: it occur when error with generating access token
+          schema:
+            $ref: '#/definitions/models.Error'
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: this API for register new user to the TravelTales app
+      parameters:
+      - description: All params are required
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns new User's information
+          schema:
+            $ref: '#/definitions/models.ResponseRegister'
+        "400":
+          description: it occur when user send invalid parametrs
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: it occur when error with write user params into database
+          schema:
+            $ref: '#/definitions/models.Error'
+      tags:
+      - Auth
+  /reset-password:
+    post:
+      consumes:
+      - application/json
+      description: this API for reset user password to the TravelTales app
+      parameters:
+      - description: email is required
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestResetPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns message about sending message to email
+          schema:
+            $ref: '#/definitions/models.ResponseResetPassword'
+        "400":
+          description: it occur when user send invalid email token
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: it occur when error with sending message to the email
+          schema:
+            $ref: '#/definitions/models.Error'
+      tags:
+      - Auth
+  /reset-password-part2/{email}:
+    post:
+      consumes:
+      - application/json
+      description: this API for user who receive message from his/her email to the
+        TravelTales app
+      parameters:
+      - description: email is required
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: enter new password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns message about reset-password
+          schema:
+            $ref: '#/definitions/models.ResponseResetPassword'
+        "400":
+          description: it occur when user enter invalid password
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: it occur when error with reseting pasword
+          schema:
+            $ref: '#/definitions/models.Error'
+      tags:
+      - Auth
+swagger: "2.0"
