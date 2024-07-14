@@ -13,7 +13,7 @@ import (
 
 // @title Auth Service
 // @version 1.0
-// @description Sayohatchilar o'rtasida tajriba almashish, sayohat rejalarini tuzish va boshqalar bilan bo'lishish imkoniyatini yaratish orqali global sayohat hamjamiyatini shakllantirish.
+// @description This is the auth service of TravelTales app
 
 // @contact.name Saidakbar
 // @contact.url http://www.support_me_with_smile
