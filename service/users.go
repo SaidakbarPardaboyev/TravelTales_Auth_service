@@ -71,10 +71,21 @@ func (u *UserService) DeleteUser(ctx context.Context, in *pb.RequestDeleteUser) 
 	return resp, nil
 }	
 
-// func (u *UserService) UpdatePassword(ctx context.Context, in *pb.RequestUpdatePassword) (*pb.ResponseUpdatePassword, error) {
-// }
-// func (u *UserService) GetUserStatistic(ctx context.Context, in *pb.RequestGetUserStatistic) (*pb.ResponseGetUserStatistic, error) {
-// }
+func (u *UserService) UpdatePassword(ctx context.Context, in *pb.RequestUpdatePassword) (
+	*pb.ResponseUpdatePassword, error) {
+	err := u.UserRepo.UpdatePassword(in.Email, in.NewPassword)
+	if err != nil {
+		u.Logger.Error(fmt.Sprintf("error with Getting users from db: %s", err))
+		return nil, err
+	}
+	return &pb.ResponseUpdatePassword{
+		Message: "Password updated successfully",
+	}, nil
+}
+
+func (u *UserService) GetUserStatistic(ctx context.Context, in *pb.RequestGetUserStatistic) (*pb.ResponseGetUserStatistic, error) {
+}
+
 // func (u *UserService) Follow(ctx context.Context, in *pb.RequestFollow) (*pb.ResponseFollow, error) {
 // }
 // func (u *UserService) GetFollowers(ctx context.Context, in *pb.RequestGetFollowers) (*pb.ResponseGetFollowers, error) {

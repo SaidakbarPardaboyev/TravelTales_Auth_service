@@ -160,6 +160,24 @@ func (u *UserRepo) DeleteUser(userId string) (*pb.ResponseDeleteUser, error) {
 	return &pb.ResponseDeleteUser{Message: "User is deleted successfully"}, nil
 }
 
+func (u *UserRepo) UpdatePassword(email, password string) error {
+
+	query := `
+		update
+			users
+		set
+			password = $1
+		where
+			email = $2
+	`
+
+	_, err := u.DB.Exec(query, password, email)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
 // func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
 // func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
