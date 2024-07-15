@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"time"
 	pb "travel/genproto/users"
@@ -153,9 +154,12 @@ func (u *UserRepo) DeleteUser(userId string) (*pb.ResponseDeleteUser, error) {
 			deleted_at is null
 	`
 
-	_, err := u.DB.Exec(query, time.Now(), userId)
+	res, err := u.DB.Exec(query, time.Now(), userId)
 	if err != nil {
 		return nil, err
+	}
+	if num, _ := res.RowsAffected(); num <= 0 {
+		return nil, fmt.Errorf("the user was already deleted")
 	}
 	return &pb.ResponseDeleteUser{Message: "User is deleted successfully"}, nil
 }
@@ -168,21 +172,112 @@ func (u *UserRepo) UpdatePassword(email, password string) error {
 		set
 			password = $1
 		where
-			email = $2
+			email = $2 and 
+			deleted_at is null
 	`
 
-	_, err := u.DB.Exec(query, password, email)
+	res, err := u.DB.Exec(query, password, email)
 	if err != nil {
 		return err
+	}
+	if num, _ := res.RowsAffected(); num <= 0 {
+		return fmt.Errorf("the user was already deleted")
 	}
 	return nil
 }
 
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
-// func (u *UserRepo) GetProfile(userId string) (*pb.ResponseGetProfile, error) {}
+func (u *UserRepo) FindNumberOfVisitedCountries(userId string) (
+	int, error) {
+
+	query := `
+		select
+			countries_visited
+		from
+			users
+		where
+			id = $1 and 
+			deleted_at is null
+	`
+	numberOfVisitedCountries := 0
+	err := u.DB.QueryRow(query, userId).Scan(&numberOfVisitedCountries)
+	if err != nil || err == sql.ErrNoRows {
+		return 0, err
+	}
+	return numberOfVisitedCountries, nil
+}
+
+func (u *UserRepo) Follow(req *pb.RequestFollow) error {
+
+	query := `
+		insert into following(
+			follower_id, following_id, followed_at
+		) values (
+			$1, $2, $3
+		)
+	`
+
+	_, err := u.DB.Exec(query, req.FollowerId, req.FollowingId, time.Now())
+	return err
+}
+
+func (u *UserRepo) GetFollowers(filter *pb.RequestGetFollowers) (
+	*pb.ResponseGetFollowers, error) {
+
+	query := `
+		select
+			follower_id
+		from
+			following
+		where
+			following_id = $1
+		limit $2
+		offset $3
+	`
+
+	rows, err := u.DB.Query(query, filter.UserId, filter.Limit,
+		filter.Page*filter.Limit)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := pb.ResponseGetFollowers{}
+	for rows.Next() {
+		var id string
+		err := rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+
+		follower, err := u.GetFollowerInfo(id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				continue
+			}
+			return nil, err
+		}
+
+		resp.Followers = append(resp.Followers, follower)
+	}
+
+	return &resp, nil
+}
+
+func (u *UserRepo) GetFollowerInfo(userid string) (
+	*pb.Follower, error) {
+
+	query := `
+		select
+			id, username, full_name
+		from 
+			users
+		where
+			id = $1 and
+			deleted_at is null
+	`
+
+	res := pb.Follower{}
+	err := u.DB.QueryRow(query, userid).Scan(&res.Id, &res.Username,
+		&res.FullName)
+
+	return &res, err
+}
