@@ -30,6 +30,7 @@ type UsersClient interface {
 	GetUserStatistic(ctx context.Context, in *RequestGetUserStatistic, opts ...grpc.CallOption) (*ResponseGetUserStatistic, error)
 	Follow(ctx context.Context, in *RequestFollow, opts ...grpc.CallOption) (*ResponseFollow, error)
 	GetFollowers(ctx context.Context, in *RequestGetFollowers, opts ...grpc.CallOption) (*ResponseGetFollowers, error)
+	ValidateUser(ctx context.Context, in *RequestGetProfile, opts ...grpc.CallOption) (*Status, error)
 }
 
 type usersClient struct {
@@ -112,6 +113,15 @@ func (c *usersClient) GetFollowers(ctx context.Context, in *RequestGetFollowers,
 	return out, nil
 }
 
+func (c *usersClient) ValidateUser(ctx context.Context, in *RequestGetProfile, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/users.Users/ValidateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServer is the server API for Users service.
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type UsersServer interface {
 	GetUserStatistic(context.Context, *RequestGetUserStatistic) (*ResponseGetUserStatistic, error)
 	Follow(context.Context, *RequestFollow) (*ResponseFollow, error)
 	GetFollowers(context.Context, *RequestGetFollowers) (*ResponseGetFollowers, error)
+	ValidateUser(context.Context, *RequestGetProfile) (*Status, error)
 	mustEmbedUnimplementedUsersServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedUsersServer) Follow(context.Context, *RequestFollow) (*Respon
 }
 func (UnimplementedUsersServer) GetFollowers(context.Context, *RequestGetFollowers) (*ResponseGetFollowers, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFollowers not implemented")
+}
+func (UnimplementedUsersServer) ValidateUser(context.Context, *RequestGetProfile) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateUser not implemented")
 }
 func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
 
@@ -312,6 +326,24 @@ func _Users_GetFollowers_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Users_ValidateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestGetProfile)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).ValidateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users.Users/ValidateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).ValidateUser(ctx, req.(*RequestGetProfile))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Users_ServiceDesc is the grpc.ServiceDesc for Users service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFollowers",
 			Handler:    _Users_GetFollowers_Handler,
+		},
+		{
+			MethodName: "ValidateUser",
+			Handler:    _Users_ValidateUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

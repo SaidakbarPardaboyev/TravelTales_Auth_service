@@ -36,13 +36,41 @@ func (u *UserService) GetProfile(ctx context.Context, in *pb.RequestGetProfile) 
 	return resp, nil
 }
 
-// func (u *UserService) EditProfile(ctx context.Context, in *pb.RequestEditProfile) (*pb.ResponseEditProfile, error) {
+func (u *UserService) ValidateUser(ctx context.Context, in *pb.RequestGetProfile) (
+	*pb.Status, error) {
+	resp := u.UserRepo.ValidateUser(in.Id)
+	return &pb.Status{Success: resp}, nil
+}
 
-// }
-// func (u *UserService) GetUsers(ctx context.Context, in *pb.RequestGetUsers) (*pb.ResponseGetUsers, error) {
-// }
-// func (u *UserService) DeleteUser(ctx context.Context, in *pb.RequestDeleteUser) (*pb.ResponseDeleteUser, error) {
-// }
+func (u *UserService) EditProfile(ctx context.Context, in *pb.RequestEditProfile) (
+	*pb.ResponseEditProfile, error) {
+	resp, err := u.UserRepo.EditProfile(in)
+	if err != nil {
+		u.Logger.Error(fmt.Sprintf("error with Getting user profile from db: %s", err))
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (u *UserService) GetUsers(ctx context.Context, in *pb.RequestGetUsers) (*pb.ResponseGetUsers, error) {
+	resp, err := u.UserRepo.GetUsers(in)
+	if err != nil {
+		u.Logger.Error(fmt.Sprintf("error with Getting users from db: %s", err))
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (u *UserService) DeleteUser(ctx context.Context, in *pb.RequestDeleteUser) (
+	*pb.ResponseDeleteUser, error) {
+	resp, err := u.UserRepo.DeleteUser(in.Id)
+	if err != nil {
+		u.Logger.Error(fmt.Sprintf("error with Getting users from db: %s", err))
+		return nil, err
+	}
+	return resp, nil
+}	
+
 // func (u *UserService) UpdatePassword(ctx context.Context, in *pb.RequestUpdatePassword) (*pb.ResponseUpdatePassword, error) {
 // }
 // func (u *UserService) GetUserStatistic(ctx context.Context, in *pb.RequestGetUserStatistic) (*pb.ResponseGetUserStatistic, error) {
