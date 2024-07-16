@@ -112,3 +112,13 @@ func (u *UserService) GetFollowers(ctx context.Context, in *pb.RequestGetFollowe
 	}
 	return resp, nil
 }
+
+func (u *UserService) GetAuthorInfo(ctx context.Context, req *pb.RequestGetAuthorInfo) (
+	*pb.ResponseGetAuthorInfo, error) {
+	resp, err := u.UserRepo.GetAuthorInfo(req.Id)
+	if err != nil {
+		u.Logger.Error(fmt.Sprintf("error with getting a author info from db: %s", err))
+		return nil, err
+	}
+	return resp, nil
+}

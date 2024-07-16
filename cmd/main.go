@@ -19,7 +19,7 @@ func main() {
 	wg.Add(2)
 
 	go ServiceRun(&wg)
-	// go RouterRun(&wg)
+	go RouterRun(&wg)
 
 	wg.Wait()
 }

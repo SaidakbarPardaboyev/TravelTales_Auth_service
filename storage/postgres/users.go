@@ -281,3 +281,23 @@ func (u *UserRepo) GetFollowerInfo(userid string) (
 
 	return &res, err
 }
+
+func (u *UserRepo) GetAuthorInfo(userid string) (
+	*pb.ResponseGetAuthorInfo, error) {
+
+	query := `
+		select
+			id, username, full_name
+		from 
+			users
+		where
+			id = $1 and
+			deleted_at is null
+	`
+
+	res := pb.ResponseGetAuthorInfo{}
+	err := u.DB.QueryRow(query, userid).Scan(&res.Id, &res.Username,
+		&res.FullName)
+
+	return &res, err
+}
