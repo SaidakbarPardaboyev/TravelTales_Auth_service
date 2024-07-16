@@ -84,31 +84,6 @@ func (u *UserService) UpdatePassword(ctx context.Context, in *pb.RequestUpdatePa
 	}, nil
 }
 
-func (u *UserService) GetUserStatistic(ctx context.Context, in *pb.RequestGetUserStatistic) (
-	*pb.ResponseGetUserStatistic, error) {
-
-	numberOfVisitedCountries, err := u.UserRepo.FindNumberOfVisitedCountries(in.Id)
-	if err != nil {
-		u.Logger.Error(fmt.Sprintf("error with getting user's statistics from db: %s", err))
-		return nil, err
-	}
-
-	resp := pb.ResponseGetUserStatistic{
-		UserId:           in.Id,
-		CountriesVisited: int64(numberOfVisitedCountries),
-	}
-
-	// finding number of stories
-
-	// finding number of comments
-
-	// finding number of likes
-
-	// finding user's last active
-
-	return &resp, nil
-}
-
 func (u *UserService) Follow(ctx context.Context, in *pb.RequestFollow) (
 	*pb.ResponseFollow, error) {
 	if in.FollowerId == in.FollowingId {

@@ -67,7 +67,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 		})
 		return
 	}
-
+	fmt.Println(resp)
 	ctx.JSON(http.StatusOK, resp)
 }
 
