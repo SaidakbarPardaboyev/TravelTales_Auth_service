@@ -425,11 +425,11 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:1111",
+	Host:             "localhost:1110",
 	BasePath:         "/auth",
 	Schemes:          []string{},
 	Title:            "Auth Service",
-	Description:      "Sayohatchilar o'rtasida tajriba almashish, sayohat rejalarini tuzish va boshqalar bilan bo'lishish imkoniyatini yaratish orqali global sayohat hamjamiyatini shakllantirish.",
+	Description:      "This is the auth service of TravelTales app",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

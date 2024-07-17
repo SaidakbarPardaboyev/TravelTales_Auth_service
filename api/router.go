@@ -19,7 +19,7 @@ import (
 // @contact.url http://www.support_me_with_smile
 // @contact.email "pardaboyevsaidakbar103@gmail.com"
 
-// @host localhost:1111
+// @host localhost:1110
 // @BasePath /auth
 func NewRouter(db *sql.DB) *gin.Engine {
 	r := gin.Default()

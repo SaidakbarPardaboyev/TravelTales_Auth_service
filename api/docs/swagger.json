@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Sayohatchilar o'rtasida tajriba almashish, sayohat rejalarini tuzish va boshqalar bilan bo'lishish imkoniyatini yaratish orqali global sayohat hamjamiyatini shakllantirish.",
+        "description": "This is the auth service of TravelTales app",
         "title": "Auth Service",
         "contact": {
             "name": "Saidakbar",
@@ -10,7 +10,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:1111",
+    "host": "localhost:1110",
     "basePath": "/auth",
     "paths": {
         "/login": {
